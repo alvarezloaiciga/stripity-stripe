@@ -630,9 +630,7 @@ defmodule Stripe.Terminal.Reader do
             [reader]
           )
 
-        Stripe.Request.new_request(opts, %{
-          "Stripe-Version: 2024-09-30.acacia;terminal_collect_inputs_beta" => "v1"
-        })
+        Stripe.Request.new_request(opts)
         |> Stripe.Request.put_endpoint(path)
         |> Stripe.Request.put_params(params)
         |> Stripe.Request.put_method(:post)
