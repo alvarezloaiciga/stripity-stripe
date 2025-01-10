@@ -64,6 +64,33 @@ defmodule Stripe.Terminal.Reader do
           }
   )
 
+
+  (
+    @typedoc "Input configuration for collecting data from Terminal readers"
+    @type collect_inputs_input :: %{
+      optional(:type) => :selection | :signature | :email | :phone | :text | :numeric,
+      optional(:required) => boolean,
+      optional(:metadata) => map(),
+      optional(:custom_text) => %{
+        optional(:title) => binary,
+        optional(:description) => binary,
+        optional(:submit_button) => binary,
+        optional(:skip_button) => binary
+      },
+      optional(:selection) => %{
+        optional(:choices) => list(%{
+          optional(:style) => :primary | :secondary,
+          optional(:value) => binary
+        })
+      },
+      optional(:toggles) => list(%{
+        optional(:title) => binary,
+        optional(:description) => binary,
+        optional(:default_value) => :enabled | :disabled
+      })
+    }
+  )
+
   (
     @typedoc "Configuration overrides"
     @type process_config :: %{optional(:skip_tipping) => boolean, optional(:tipping) => tipping}
@@ -538,6 +565,53 @@ defmodule Stripe.Terminal.Reader do
         path =
           Stripe.OpenApi.Path.replace_path_params(
             "/v1/test_helpers/terminal/readers/{reader}/present_payment_method",
+            [
+              %OpenApiGen.Blueprint.Parameter{
+                in: "path",
+                name: "reader",
+                required: true,
+                schema: %OpenApiGen.Blueprint.Parameter.Schema{
+                  name: "reader",
+                  title: nil,
+                  type: "string",
+                  items: [],
+                  properties: [],
+                  any_of: []
+                }
+              }
+            ],
+            [reader]
+          )
+
+        Stripe.Request.new_request(opts)
+        |> Stripe.Request.put_endpoint(path)
+        |> Stripe.Request.put_params(params)
+        |> Stripe.Request.put_method(:post)
+        |> Stripe.Request.make_request()
+      end
+    )
+  )
+
+
+  (
+    nil
+
+    @doc "<p>In addition to collecting payments, Terminal smart readers allow you to display forms and collect information from customers.</p>\n\n#### Details\n\n * Method: `post`\n * Path: `/v1/terminal/readers/{reader}/collect_inputs`\n"
+    (
+      @spec collect_inputs(
+              reader :: binary(),
+              params :: %{
+                optional(:inputs) => list(collect_inputs_input),
+              },
+              opts :: Keyword.t()
+            ) ::
+              {:ok, Stripe.Terminal.Reader.t()}
+              | {:error, Stripe.ApiErrors.t()}
+              | {:error, term()}
+      def collect_inputs(reader, params \\ %{}, opts \\ []) do
+        path =
+          Stripe.OpenApi.Path.replace_path_params(
+            "/v1/terminal/readers/{reader}/collect_inputs",
             [
               %OpenApiGen.Blueprint.Parameter{
                 in: "path",
